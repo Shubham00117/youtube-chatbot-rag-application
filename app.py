@@ -1,7 +1,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 
-from components import load_transcript, split_text, get_embeddings, build_vector_store, get_retriever, get_llm
+from components import load_transcript, SUPPORTED_LANGUAGES, split_text, get_embeddings, build_vector_store, get_retriever, get_llm
 from chains import build_rag_chain, generate_summary
 from ui import inject_custom_css, render_header, render_status_badges
 
@@ -32,6 +32,14 @@ if "summary" not in st.session_state:
 
 st.markdown('<div class="glass-card"><h3>📺 Enter YouTube Video ID</h3>', unsafe_allow_html=True)
 video_id = st.text_input("Video ID", placeholder="e.g. LPZh9BOjkQs", label_visibility="collapsed")
+
+lang_col1, lang_col2 = st.columns([1, 1])
+with lang_col1:
+    selected_lang = st.selectbox(
+        "🌐 Transcript Language",
+        options=list(SUPPORTED_LANGUAGES.keys()),
+        index=0,
+    )
 st.markdown('</div>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 2, 1])
@@ -42,7 +50,7 @@ if load_btn and video_id:
     try:
         # Stage 1a — Document Ingestion
         with st.spinner("📥 Fetching transcript..."):
-            transcript = load_transcript(video_id.strip())
+            transcript = load_transcript(video_id.strip(), language=selected_lang)
 
         if transcript:
             with st.spinner("⚙️ Building RAG index..."):

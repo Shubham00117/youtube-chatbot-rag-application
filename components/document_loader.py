@@ -4,12 +4,22 @@ from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 # Stage 1a — Document Ingestion
 # ──────────────────────────────────────────────
 
-def load_transcript(video_id: str) -> str | None:
+# Supported language codes and display labels
+SUPPORTED_LANGUAGES = {
+    "English": ["en"],
+    "Hindi": ["hi"],
+    "Hindi (Auto-generated)": ["hi", "en"],
+    "English (Auto-generated)": ["en", "hi"],
+}
+
+
+def load_transcript(video_id: str, language: str = "English") -> str | None:
     """
-    Fetch the English transcript of a YouTube video.
+    Fetch the transcript of a YouTube video in the selected language.
 
     Args:
         video_id: The YouTube video ID (not the full URL).
+        language: Display label from SUPPORTED_LANGUAGES (default: "English").
 
     Returns:
         Plain text transcript string, or None if unavailable.
@@ -17,9 +27,11 @@ def load_transcript(video_id: str) -> str | None:
     Raises:
         RuntimeError: If an unexpected error occurs during fetching.
     """
+    lang_codes = SUPPORTED_LANGUAGES.get(language, ["en"])
+
     try:
         api = YouTubeTranscriptApi()
-        fetched = api.fetch(video_id, languages=["en"])
+        fetched = api.fetch(video_id, languages=lang_codes)
         transcript = " ".join(snippet.text for snippet in fetched)
         return transcript
     except TranscriptsDisabled:
