@@ -6,10 +6,8 @@ from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 
 # Supported language codes and display labels
 SUPPORTED_LANGUAGES = {
-    "English": ["en"],
-    "Hindi": ["hi"],
-    "Hindi (Auto-generated)": ["hi", "en"],
     "English (Auto-generated)": ["en", "hi"],
+    "Hindi (Auto-generated)": ["hi", "en"],
 }
 
 
